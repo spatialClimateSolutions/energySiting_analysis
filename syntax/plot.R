@@ -1,5 +1,9 @@
 source("./syntax/function.R")
-source("./syntax/data.R")
+
+load("./derived/total.RData")
+dac_masked <- rast("./derived/dac_masked.tif")
+results_masked <- rast("./derived/results_masked.tif")
+
 
 ### f1
 f1a <- solar_locations %>% 

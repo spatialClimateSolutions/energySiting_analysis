@@ -37,7 +37,6 @@ for(i in 5:8){
 }
 
 terra::writeRaster(rast(results_masked), "./derived/results_masked.tif", overwrite=TRUE)
-results_masked <- rast("./derived/results_masked.tif")
 
 
 ### regions by DAC
@@ -178,7 +177,6 @@ for(i in 1:2){
 
 dac_masked <- c(dac_masked_s, dac_masked_w)
 terra::writeRaster(rast(dac_masked), "./derived/dac_masked.tif", overwrite=TRUE)
-dac_masked <- rast("./derived/dac_masked.tif")
 
 
 ### slope
@@ -237,4 +235,3 @@ w_d <- RE("wind") %>%
 save(solar_locations, wind_locations, s_ab_sf, w_ab_sf, imp,solar_resamps, wind_resamps, rst_s, rst_w, 
      s_dat, w_dat, rgn_results, dac_results, s_d, w_d, state_boundaries,rgn,
      file = "./derived/total.RData")
-# load("./derived/total.RData")
