@@ -5,7 +5,7 @@ if (!require(librarian)){
 
 librarian::shelf("raster", "sf", "tidyverse", "terra", "here", "tictoc", "foreach", "doParallel", "foreign", "dplyr","tigris",
                  "stargazer", "caret", "tidycensus", "ggpubr", "tidyterra", "gridExtra", "rasterVis", "RColorBrewer", "grid",
-                 "lme4", "lmerTest", "ggstance", "cowplot", "mapview")
+                 "lme4", "lmerTest", "ggstance", "cowplot", "mapview","viridis")
 sf_use_s2(FALSE)
 library(ggnewscale)
 ggsave <- function(..., bg = 'white') ggplot2::ggsave(..., bg = bg)

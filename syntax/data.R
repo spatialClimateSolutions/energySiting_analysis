@@ -59,7 +59,7 @@ rgn_vect <- rgn %>%
   st_transform(crs = projection) %>% 
   terra::vect()
 
-models <- c("GLM","Lasso","RandomForest","XGBoost")
+models <- c("GLM","Lasso","RF","XGBoost")
 
 ### mean probability by region
 rgn_results <- data.frame()
