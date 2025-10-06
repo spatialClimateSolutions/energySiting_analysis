@@ -192,15 +192,15 @@ win <- w_dat %>% # cf, tx, lag
 RE <- function(tech){
   if(tech == "solar"){
     da <- sol
-    model1vars <- names(da)[c(1:21)]
+    model1vars <- setdiff(names(da)[c(1:21)], c("pop","tx","env"))
     fvar <- as.formula(paste("treat ~", paste(model1vars, collapse = " + "), "+ (pop+tx+env|region)"))
   }else{
     da <- win
-    model1vars <- names(da)[c(1:21)]
+    model1vars <- setdiff(names(da)[c(1:21)], c("cf","tx","lag"))
     fvar <- as.formula(paste("treat ~", paste(model1vars, collapse = " + "), "+ (cf+tx+lag|region)"))
   }
   
-  fit <- lmer(fvar, data = da)
+  fit <- glmer(fvar, family = "binomial", data = da)
   # summary(fit)
   
   tp <- sqrt(attr(ranef(fit, condVar=T)[[1]], "postVar"))*1.96

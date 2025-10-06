@@ -361,4 +361,105 @@ grid.arrange(grobs = list(raster_grobs_labeled, barplot_grob, legend_grob), layo
 dev.off()
 
 ### f4
+s_f4 <- s_d %>% 
+  mutate(region = factor(region, levels = c("West","Mtwest","Midwest","Texas","South","Northeast"))) %>% 
+    ggplot(aes(x = R_effect, y = region, xmin=R_effect-SE, xmax=R_effect+SE)) +
+    geom_vline(xintercept = 0,linetype = "dashed", size = 0.5, color = "gray30") +
+    
+    geom_pointrangeh(position = position_dodge2v(height = 0.4), color = "gray10", fatten = 2, size = 0.7) +
+    
+    facet_wrap(~variable, scales = "free_x") +
+    theme_bw() +
+    
+    labs(x = "Odds ratio (log scale)", y ="", color = "",
+         title = "") +
+  
+    theme(panel.grid.minor = element_blank(),
+          panel.grid.major.x = element_blank(),
+          strip.background =element_rect(fill="gray22",color="gray22"),
+          strip.text = element_text(color = 'white',family="Franklin Gothic Book",size=12),
+          legend.position = "bottom",
+          axis.text.x = element_text(color = "black",family="Franklin Gothic Book",size=11),
+          axis.text.y = element_text(color = "black",family="Franklin Gothic Book",size=11),
+          axis.title.x = element_text(color = "black",family="Franklin Gothic Book",size=11),
+          plot.title=element_text(family="Franklin Gothic Demi", size=20)) 
+  
+
+w_f4 <-  w_d %>% 
+  mutate(region = factor(region, levels = c("West","Mtwest","Midwest","Texas","South","Northeast"))) %>% 
+  ggplot(aes(x = R_effect, y = region, xmin=R_effect-SE, xmax=R_effect+SE)) +
+  geom_vline(xintercept = 0,linetype = "dashed", size = 0.5, color = "gray30") +
+  
+  geom_pointrangeh(position = position_dodge2v(height = 0.4), color = "gray10", fatten = 2, size = 0.7) +
+  
+  facet_wrap(~variable, scales = "free_x") +
+  theme_bw() +
+  
+  labs(x = "Odds ratio (log scale)", y ="", color = "",
+       title = "") +
+  
+  theme(panel.grid.minor = element_blank(),
+        panel.grid.major.x = element_blank(),
+        strip.background =element_rect(fill="gray22",color="gray22"),
+        strip.text = element_text(color = 'white',family="Franklin Gothic Book",size=12),
+        legend.position = "bottom",
+        axis.text.x = element_text(color = "black",family="Franklin Gothic Book",size=11),
+        axis.text.y = element_text(color = "black",family="Franklin Gothic Book",size=11),
+        axis.title.x = element_text(color = "black",family="Franklin Gothic Book",size=11),
+        plot.title=element_text(family="Franklin Gothic Demi", size=20))
+
+
+maps <- map(.x = c("Population density", "Transmission dist", "Environmental score"),
+            .f = function(x) rgn %>% 
+              left_join(s_d, by = "region") %>%
+              filter(variable == x) %>%
+              
+              ggplot() +
+              geom_sf(fill = "white", color = "gray0") + # US border
+              geom_sf(aes(fill = R_effect), size = 0.3) +
+              
+              theme_minimal() +
+              scale_fill_gradient2(low = if (x %in% c("Transmission dist", "Environmental score")) "darkorange3" else "royalblue3", 
+                                   mid = "white", 
+                                   high = if (x %in% c("Transmission dist", "Environmental score")) "royalblue3" else "darkorange3", 
+                                   midpoint = 0) +
+              
+              labs(title = x, fill = "") +
+              coord_sf(crs = st_crs(2163), xlim = c(-2500000, 2500000), 
+                       ylim = c(-2300000,730000), expand = FALSE, datum = NA) +
+              theme(legend.position = "right",
+                    plot.title = element_text(hjust = 0.5))
+)
+
+s_f41 <- plot_grid(plotlist = maps, labels = "A", label_size = 14, label_fontface = "plain", nrow = 1, hjust = -0.2)
+
+
+maps <- map(.x = c("Capacity factor", "Spatial lag", "Transmission dist"),
+            .f = function(x) rgn %>% 
+              left_join(w_d, by = "region") %>%
+              filter(variable == x) %>%
+              
+              ggplot() +
+              geom_sf(fill = "white", color = "gray0") + # US border
+              geom_sf(aes(fill = R_effect), size = 0.3) +
+              
+              theme_minimal() +
+              scale_fill_gradient2(low = if (x %in% c("Transmission dist", "Environmental score")) "darkorange3" else "royalblue3", 
+                                   mid = "white", 
+                                   high = if (x %in% c("Transmission dist", "Environmental score")) "royalblue3" else "darkorange3", 
+                                   midpoint = 0) +
+              
+              labs(title = x, fill = "") +
+              coord_sf(crs = st_crs(2163), xlim = c(-2500000, 2500000), 
+                       ylim = c(-2300000,730000), expand = FALSE, datum = NA) +
+              theme(legend.position = "right",
+                    plot.title = element_text(hjust = 0.5))
+)
+
+w_f41 <- plot_grid(plotlist = maps, labels = "B", label_size = 14, label_fontface = "plain", nrow = 1, hjust = -0.2)
+
+
+f4 <- ggarrange(s_f41, s_f4, w_f41, w_f4, heights = c(1,1,1,1), nrow = 4)
+ggsave("./fig/f4.png", f4, width = 12, height = 12)
+
 
