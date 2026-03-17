@@ -4,6 +4,8 @@ load("./derived/total.RData")
 dac_masked <- rast("./derived/dac_masked.tif")
 results_masked <- rast("./derived/results_masked.tif")
 
+# plot(dac_masked)
+# plot(results_masked)
 
 ### f1
 f1a <- solar_locations %>% 
@@ -461,5 +463,133 @@ w_f41 <- plot_grid(plotlist = maps, labels = "B", label_size = 14, label_fontfac
 
 f4 <- ggarrange(s_f41, s_f4, w_f41, w_f4, heights = c(1,1,1,1), nrow = 4)
 ggsave("./fig/f4.png", f4, width = 12, height = 12)
+
+
+
+# dodge <- position_dodge(width = 0.6)
+# f5b <- ttest_results %>%
+#   mutate(sig = p_value < 0.05) %>%
+#   pivot_longer(
+#     cols = c(mean_DAC, mean_nonDAC, se_DAC, se_nonDAC),
+#     names_to = c(".value", "group"),
+#     names_pattern = "(mean|se)_(DAC|nonDAC)"
+#   ) %>%
+#   mutate(
+#     group = recode(group, "DAC" = "DAC", "nonDAC" = "Non-DAC"),
+#     ci_low  = mean - 1.96 * se,
+#     ci_high = mean + 1.96 * se
+#   ) %>%
+#   mutate(region = factor(region, levels = c("West","Mtwest","Midwest","Texas","South","Northeast"))) %>% 
+#   ggplot(aes(x = group, y = mean)) +
+#   
+#   # POINTS: filled if significant, hollow if not
+#   geom_point(
+#     aes(
+#       color = model,
+#       fill = sig,
+#       group = interaction(model, sig)
+#     ),
+#     shape = 21,
+#     size = 2,
+#     stroke = 1,
+#     position = dodge
+#   ) +
+#   
+#   # ERROR BARS: must use the same grouping + dodge
+#   geom_errorbar(
+#     aes(
+#       ymin = ci_low,
+#       ymax = ci_high,
+#       color = model,
+#       group = interaction(model, sig)
+#     ),
+#     width = 0.3,
+#     position = dodge
+#   ) +
+#   
+#   facet_grid(tech ~ region, switch = "y") +
+#   
+#   scale_fill_manual(values = c(`FALSE` = "white", `TRUE` = "black")) +
+#   scale_color_manual(values = c(
+#     "GLM"      = "#1b9e77",
+#     "Lasso"    = "#d95f02",
+#     "RF"       = "#7570b3",
+#     "XGBoost"  = "#e7298a"
+#   )) +
+#   
+#   labs(
+#     title = "DAC vs Non‑DAC Mean Values with 95% CI",
+#     subtitle = "Significant differences (p < 0.05) shown as filled points",
+#     x = "",
+#     y = "Mean Value",
+#     color = "Model",
+#     fill = "Significant"
+#   ) +
+#   theme_bw(base_size = 14) +
+#   theme(panel.grid.minor = element_blank(),
+#         panel.grid.major.x = element_blank(),
+#         strip.background =element_rect(fill="gray22",color="gray22"),
+#         strip.text = element_text(color = 'white',family="Franklin Gothic Book",size=12),
+#         strip.text.y.left = element_text(angle = 0, size = 12, face = "bold"),
+#         strip.placement = "outside",
+#         legend.position = "bottom",
+#         axis.text.x = element_text(angle = 30, hjust = 1,
+#                                    color = "black",family="Franklin Gothic Book",size=11),
+#         axis.text.y = element_text(color = "black",family="Franklin Gothic Book",size=11),
+#         axis.title.x = element_text(color = "black",family="Franklin Gothic Book",size=11),
+#         plot.title=element_text(family="Franklin Gothic Demi", size=20))
+
+
+
+f5 <- ttest_results %>%
+  mutate(
+    diff = mean_nonDAC - mean_DAC,
+    pooled_sd = sqrt((sd_DAC^2 + sd_nonDAC^2) / 2),
+    cohen_d = diff / pooled_sd,
+    sig = p_value < 0.05
+  ) %>% 
+  mutate(region = factor(region, levels = c("West","Mtwest","Midwest","Texas","South","Northeast"))) %>% 
+  ggplot(aes(x = model, y = cohen_d)) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "gray50") +
+  
+  # points: filled if significant, hollow if not
+  geom_point(
+    aes(fill = sig),
+    shape = 21,
+    size = 2,
+    stroke = 1
+  ) +
+  
+  facet_grid(tech ~ region, switch = "y") +
+  
+  scale_fill_manual(values = c(`FALSE` = "white", `TRUE` = "black")) +
+  
+  labs(
+    title = "Effect Size (Cohen’s d) for Non‑DAC vs DAC",
+    subtitle = "Filled points indicate significant differences (p < 0.05) of t-test",
+    x = "Region",
+    y = "Effect Size (Cohen’s d)",
+    color = "Model",
+    fill = "Significant"
+  ) +
+  
+  theme_bw(base_size = 14) +
+  theme(panel.grid.minor = element_blank(),
+        panel.grid.major.x = element_blank(),
+        strip.background =element_rect(fill="gray22",color="gray22"),
+        strip.text = element_text(color = 'white',family="Franklin Gothic Book",size=12),
+        strip.text.y.left = element_text(angle = 0, size = 12, face = "bold"),
+        strip.placement = "outside",
+        legend.position = "bottom",
+        axis.text.x = element_text(angle = 30, hjust = 1,
+                                   color = "black",family="Franklin Gothic Book",size=11),
+        axis.text.y = element_text(color = "black",family="Franklin Gothic Book",size=11),
+        axis.title.x = element_text(color = "black",family="Franklin Gothic Book",size=11),
+        plot.title=element_text(family="Franklin Gothic Demi", size=14))
+
+
+ggsave("./fig/f5.png", f5,
+
+       width = 12, height = 5)
 
 
