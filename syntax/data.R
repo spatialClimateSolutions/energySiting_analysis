@@ -366,4 +366,5 @@ w_d <- RE("wind") %>%
 
 save(solar_locations, wind_locations, s_ab_sf, w_ab_sf, imp,solar_resamps, wind_resamps, rst_s, rst_w, 
      s_dat, w_dat, rgn_results, dac_results, s_d, w_d, state_boundaries,rgn,
+     ttest_results, 
      file = "./derived/total.RData")

@@ -66,25 +66,25 @@ ggsave("./fig/f1.png",
 
 
 ### f2
-s_reg <- rst_s %>% 
-  ggplot(aes(x = pe, y = reorder(var, pe))) +
-  geom_vline(xintercept = 0,linetype = "dashed", size = 0.5, color = "gray30") +
-  geom_errorbar(aes(xmin=pe-1.96*se, xmax=pe+1.96*se),color="gray50", width = 0.5) +
-  geom_point(aes(fill = color),size = 2,pch=21) +
-  theme_bw() +
-  facet_wrap(~ Group, nrow = 1) +
-  
-  labs(fill = "Significant", y = "", x = "Odds ratio (log scale)", title = "A") +
-  scale_fill_manual(values=c("gray", "red")) +
-  theme(panel.grid.minor = element_blank(),
-        panel.grid.major.x = element_blank(),
-        strip.background =element_rect(fill="gray22",color="gray22"),
-        strip.text = element_text(color = 'white',family="Franklin Gothic Book",size=12),
-        legend.position = "none",
-        axis.text.x = element_text(color = "black",family="Franklin Gothic Book",size=6),
-        axis.text.y = element_text(color = "black",family="Franklin Gothic Book",size=9),
-        axis.title.x = element_text(color = "black",family="Franklin Gothic Book",size=11),
-        plot.title=element_text(family="Franklin Gothic Demi", size=16, hjust = -0.09)) 
+# s_reg <- rst_s %>% 
+#   ggplot(aes(x = pe, y = reorder(var, pe))) +
+#   geom_vline(xintercept = 0,linetype = "dashed", size = 0.5, color = "gray30") +
+#   geom_errorbar(aes(xmin=pe-1.96*se, xmax=pe+1.96*se),color="gray50", width = 0.5) +
+#   geom_point(aes(fill = color),size = 2,pch=21) +
+#   theme_bw() +
+#   facet_wrap(~ Group, nrow = 1) +
+#   
+#   labs(fill = "Significant", y = "", x = "Odds ratio (log scale)", title = "A") +
+#   scale_fill_manual(values=c("gray", "red")) +
+#   theme(panel.grid.minor = element_blank(),
+#         panel.grid.major.x = element_blank(),
+#         strip.background =element_rect(fill="gray22",color="gray22"),
+#         strip.text = element_text(color = 'white',family="Franklin Gothic Book",size=12),
+#         legend.position = "none",
+#         axis.text.x = element_text(color = "black",family="Franklin Gothic Book",size=6),
+#         axis.text.y = element_text(color = "black",family="Franklin Gothic Book",size=9),
+#         axis.title.x = element_text(color = "black",family="Franklin Gothic Book",size=11),
+#         plot.title=element_text(family="Franklin Gothic Demi", size=16, hjust = -0.09)) 
 
 
 s_reg1 <- rst_s %>% 
@@ -130,26 +130,26 @@ s_reg2 <- rst_s %>%
         plot.title=element_text(family="Franklin Gothic Demi", size=16, hjust = -0.09)) 
 
 
-w_reg <- rst_w %>% 
-  ggplot(aes(x = pe, y = reorder(var, pe))) +
-  geom_vline(xintercept = 0,linetype = "dashed", size = 0.5, color = "gray30") +
-  geom_errorbar(aes(xmin=pe-1.96*se, xmax=pe+1.96*se),color="gray50", width = 0.5) +
-  geom_point(aes(fill = color),size = 2,pch=21) +
-  theme_bw() +
-  labs(title = "B") +
-  facet_wrap(~ Group, nrow = 1) +
-  
-  labs(fill = "Significant", y = "", x = "Odds ratio (log scale)") +
-  scale_fill_manual(values=c("gray", "red")) +
-  theme(panel.grid.minor = element_blank(),
-        panel.grid.major.x = element_blank(),
-        strip.background =element_rect(fill="gray22",color="gray22"),
-        strip.text = element_text(color = 'white',family="Franklin Gothic Book",size=12),
-        legend.position = "bottom",
-        axis.text.x = element_text(color = "black",family="Franklin Gothic Book",size=6),
-        axis.text.y = element_text(color = "black",family="Franklin Gothic Book",size=9),
-        axis.title.x = element_text(color = "black",family="Franklin Gothic Book",size=11),
-        plot.title=element_text(family="Franklin Gothic Demi", size=16,  hjust = -0.09)) 
+# w_reg <- rst_w %>% 
+#   ggplot(aes(x = pe, y = reorder(var, pe))) +
+#   geom_vline(xintercept = 0,linetype = "dashed", size = 0.5, color = "gray30") +
+#   geom_errorbar(aes(xmin=pe-1.96*se, xmax=pe+1.96*se),color="gray50", width = 0.5) +
+#   geom_point(aes(fill = color),size = 2,pch=21) +
+#   theme_bw() +
+#   labs(title = "B") +
+#   facet_wrap(~ Group, nrow = 1) +
+#   
+#   labs(fill = "Significant", y = "", x = "Odds ratio (log scale)") +
+#   scale_fill_manual(values=c("gray", "red")) +
+#   theme(panel.grid.minor = element_blank(),
+#         panel.grid.major.x = element_blank(),
+#         strip.background =element_rect(fill="gray22",color="gray22"),
+#         strip.text = element_text(color = 'white',family="Franklin Gothic Book",size=12),
+#         legend.position = "bottom",
+#         axis.text.x = element_text(color = "black",family="Franklin Gothic Book",size=6),
+#         axis.text.y = element_text(color = "black",family="Franklin Gothic Book",size=9),
+#         axis.title.x = element_text(color = "black",family="Franklin Gothic Book",size=11),
+#         plot.title=element_text(family="Franklin Gothic Demi", size=16,  hjust = -0.09)) 
 
 
 w_reg1 <- rst_w %>% 
@@ -538,6 +538,55 @@ ggsave("./fig/f4.png", f4, width = 12, height = 12)
 #         axis.text.y = element_text(color = "black",family="Franklin Gothic Book",size=11),
 #         axis.title.x = element_text(color = "black",family="Franklin Gothic Book",size=11),
 #         plot.title=element_text(family="Franklin Gothic Demi", size=20))
+
+
+
+library(terra)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(patchwork)
+
+# Your raster
+r <- dac_masked
+
+# Give clear names to the four layers
+names(r) <- c("Solar_NonDAC", "Solar_DAC", "Wind_NonDAC", "Wind_DAC")
+
+# Convert to data frame for ggplot
+df <- as.data.frame(r, xy = TRUE) %>%
+  pivot_longer(cols = Solar_NonDAC:Wind_DAC,
+               names_to = "layer",
+               values_to = "value")
+
+# Factor for ordering panels
+df$layer <- factor(df$layer,
+                   levels = c("Solar_NonDAC", "Solar_DAC",
+                              "Wind_NonDAC", "Wind_DAC"),
+                   labels = c("Solar Non-DAC", "Solar DAC",
+                              "Wind Non-DAC", "Wind DAC"))
+
+# Shared color scale
+prob_scale <- scale_fill_viridis_c(
+  option = "magma",
+  limits = c(0, 1),
+  name = "Probability"
+)
+
+# Base plot
+p <- ggplot(df) +
+  geom_raster(aes(x = x, y = y, fill = value)) +
+  coord_equal() +
+  prob_scale +
+  theme_minimal(base_size = 12) +
+  theme(
+    axis.title = element_blank(),
+    axis.text = element_blank(),
+    panel.grid = element_blank()
+  ) +
+  facet_wrap(~ layer, ncol = 2)
+
+
 
 
 
