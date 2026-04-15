@@ -541,56 +541,36 @@ ggsave("./fig/f4.png", f4, width = 12, height = 12)
 
 
 
-library(terra)
-library(ggplot2)
-library(dplyr)
-library(tidyr)
-library(patchwork)
+rr <- dac_masked
+names(rr) <- c("Solar_NonDAC", "Solar_DAC", "Wind_NonDAC", "Wind_DAC")
 
-# Your raster
-r <- dac_masked
+f5a <- ggplot() +
 
-# Give clear names to the four layers
-names(r) <- c("Solar_NonDAC", "Solar_DAC", "Wind_NonDAC", "Wind_DAC")
-
-# Convert to data frame for ggplot
-df <- as.data.frame(r, xy = TRUE) %>%
-  pivot_longer(cols = Solar_NonDAC:Wind_DAC,
-               names_to = "layer",
-               values_to = "value")
-
-# Factor for ordering panels
-df$layer <- factor(df$layer,
-                   levels = c("Solar_NonDAC", "Solar_DAC",
-                              "Wind_NonDAC", "Wind_DAC"),
-                   labels = c("Solar Non-DAC", "Solar DAC",
-                              "Wind Non-DAC", "Wind DAC"))
-
-# Shared color scale
-prob_scale <- scale_fill_viridis_c(
-  option = "magma",
-  limits = c(0, 1),
-  name = "Probability"
-)
-
-# Base plot
-p <- ggplot(df) +
-  geom_raster(aes(x = x, y = y, fill = value)) +
-  coord_equal() +
-  prob_scale +
-  theme_minimal(base_size = 12) +
-  theme(
-    axis.title = element_blank(),
-    axis.text = element_blank(),
-    panel.grid = element_blank()
+  # This draws the shape of the US in gray before the raster is added
+  geom_sf(data = rgn, fill = "gray80", color = "white", linewidth = 0.2) +
+  
+  # geom_spatraster will draw the colors on top of the gray land
+  geom_spatraster(data = rr) +
+  
+  geom_sf(data = rgn, fill = NA, color = "white", linewidth = 0.2) +
+  
+  scale_fill_viridis_c(
+    option = "viridis", 
+    na.value = "transparent", # CRITICAL: Makes NA areas show the gray map underneath
+    name = "Probability   ",
+    labels = scales::label_number()
   ) +
-  facet_wrap(~ layer, ncol = 2)
+  facet_wrap(~lyr, ncol = 2) +
+  theme_void() + # Removes the grid and axis labels for a cleaner look
+  theme(
+    strip.text = element_text(face = "bold", size = 12, margin = margin(b = 10)),
+    legend.position = "bottom",
+    legend.key.width = unit(2, "cm"),
+    plot.margin = margin(10, 10, 10, 10)
+  )
 
 
-
-
-
-f5 <- ttest_results %>%
+f5b <- ttest_results %>%
   mutate(
     diff = mean_nonDAC - mean_DAC,
     pooled_sd = sqrt((sd_DAC^2 + sd_nonDAC^2) / 2),
@@ -637,8 +617,16 @@ f5 <- ttest_results %>%
         plot.title=element_text(family="Franklin Gothic Demi", size=14))
 
 
-ggsave("./fig/f5.png", f5,
+ggsave("./fig/f5.png", 
+       ggarrange(f5a,f5b, nrow = 2,
+                 heights = c(2,1),
+                 labels = c("A", "B"),  # Adds labels to plots
+                 label.x = 0,        # Adjust horizontal position of labels
+                 label.y = 1,        # Adjust vertical position of labels
+                 font.label = list(size = 14, font = "plain")), 
+       
+       width = 12, height = 12)
 
-       width = 12, height = 5)
+
 
 
